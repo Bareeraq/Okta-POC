@@ -13,9 +13,38 @@
     <script src="rbac.js"></script>
 
     <script>
-        protectPage("Ops-Admin");
-        attachLogoutHandler();
+        document.addEventListener("DOMContentLoaded", async () => {
+
+            try {
+
+                // Restore login tokens if returning from Okta
+                if (oktaAuth.isLoginRedirect()) {
+                    await oktaAuth.handleLoginRedirect();
+                }
+
+                // Ensure user logged in
+                if (!(await oktaAuth.isAuthenticated())) {
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                // RBAC protection
+                await protectPage("Ops-admin"); // ✅ correct case
+
+                // Logout button
+                attachLogoutHandler();
+
+                // Debug
+                console.log("Ops Admin User:", await oktaAuth.getUser());
+
+            } catch (error) {
+                console.error("Ops-admin page error:", error);
+                window.location.href = "index.html";
+            }
+
+        });
     </script>
+
 
     <button id="logoutBtn">Logout</button>
 

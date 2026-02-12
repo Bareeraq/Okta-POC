@@ -1,19 +1,19 @@
-//login
-document.addEventListener("DOMContentLoaded", () => {
+// //login
+// document.addEventListener("DOMContentLoaded", () => {
 
-    const loginBtn = document.getElementById("loginBtn");
+//     const loginBtn = document.getElementById("loginBtn");
 
-    if (!loginBtn) {
-        console.error("Login button not found");
-        return;
-    }
+//     if (!loginBtn) {
+//         console.error("Login button not found");
+//         return;
+//     }
 
-    loginBtn.addEventListener("click", async () => {
-        console.log("Login button clicked");
-        await oktaAuth.signInWithRedirect();
-    });
+//     loginBtn.addEventListener("click", async () => {
+//         console.log("Login button clicked");
+//         await oktaAuth.signInWithRedirect();
+//     });
 
-});
+// });
 
 
 // //handle redirect after Okta login
@@ -25,3 +25,5 @@ document.addEventListener("DOMContentLoaded", () => {
 // }
 
 // handleLogin();
+
+console.log("App initialized");

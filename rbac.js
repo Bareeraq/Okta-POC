@@ -1,8 +1,63 @@
+// Auto redirect after login
+async function redirectUserByRole() {
+
+    //Ensure tokens handled
+    if (oktaAuth.isLoginRedirect()) {
+        await oktaAuth.handleLoginRedirect();
+    }
+
+    //Ensure user is authenticated
+    const isAuthenticated = await oktaAuth.isAuthenticated();
+
+    if (!isAuthenticated) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    //Now safe to fetch user
+    const user = await oktaAuth.getUser();
+    const groups = user.groups || [];
+
+    console.log("User Roles:", groups);
+
+    if (groups.includes("Ops-admin")) {
+        window.location.href = "ops-admin.html";
+    }
+    else if (groups.includes("Reviewer")) {
+        window.location.href = "reviewer.html";
+    }
+    else if (groups.includes("Rater")) {
+        window.location.href = "rater.html";
+    }
+    else if (groups.includes("Client")) {
+        window.location.href = "client.html";
+    }
+    else {
+        window.location.href = "unauthorized.html";
+    }
+}
+
+
 //protect page for single role
+// async function protectPage(roleRequired) {
+//     const user = await oktaAuth.getUser();
+
+//     if (!user || !user.groups || !user.groups.includes(roleRequired)) {
+//         window.location.href = "unauthorized.html";
+//     }
+// }
+
+
 async function protectPage(roleRequired) {
+
+    if (!(await oktaAuth.isAuthenticated())) {
+        window.location.href = "index.html";
+        return;
+    }
+
     const user = await oktaAuth.getUser();
 
-    if (!user || !user.groups || !user.groups.includes(roleRequired)) {
+    if (!user?.groups?.includes(roleRequired)) {
         window.location.href = "unauthorized.html";
     }
 }
@@ -28,39 +83,40 @@ async function protectPageMulti(rolesAllowed) {
 
 
 //auto redirect after login
-async function redirectUserByRole() {
+// async function redirectUserByRole() {
 
-    const user = await oktaAuth.getUser();
+//     const user = await oktaAuth.getUser();
 
-    if (!user || !user.groups || user.groups.length === 0) {
-        window.location.href = "unauthorized.html";
-        return;
-    }
+//     if (!user || !user.groups || user.groups.length === 0) {
+//         window.location.href = "unauthorized.html";
+//         return;
+//     }
 
-    const groups = user.groups;
+//     const groups = user.groups;
 
-    console.log("User Roles:", groups);
+//     console.log("User Roles:", groups);
 
-    if (groups.includes("Ops-admin")) {
-        window.location.href = "ops-admin.html";
-    }
-    else if (groups.includes("Reviewer")) {
-        window.location.href = "reviewer.html";
-    }
-    else if (groups.includes("Rater")) {
-        window.location.href = "rater.html";
-    }
-    else if (groups.includes("Client")) {
-        window.location.href = "client.html";
-    }
-    else {
-        window.location.href = "unauthorized.html";
-    }
+//     if (groups.includes("Ops-admin")) {
+//         window.location.href = "ops-admin.html";
+//     }
+//     else if (groups.includes("Reviewer")) {
+//         window.location.href = "reviewer.html";
+//     }
+//     else if (groups.includes("Rater")) {
+//         window.location.href = "rater.html";
+//     }
+//     else if (groups.includes("Client")) {
+//         window.location.href = "client.html";
+//     }
+//     else {
+//         window.location.href = "unauthorized.html";
+//     }
 
-    document.body.style.display = "none";
+//     document.body.style.display = "none";
 
-}
+// }
 
+//logout handler
 function attachLogoutHandler(buttonId = "logoutBtn") {
 
     const btn = document.getElementById(buttonId);
