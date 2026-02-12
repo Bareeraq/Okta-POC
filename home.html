@@ -21,38 +21,56 @@
     <p>Redirecting you based on your role...</p>
 
     <button id="logoutBtn">Logout</button>
+    
     <script src="https://global.oktacdn.com/okta-auth-js/7.0.0/okta-auth-js.min.js"></script>
     <script src="auth.js"></script>
     <script src="rbac.js"></script>
+    
     <script>
-        document.addEventListener("DOMContentLoaded", async () => {
+        (async function() {
             try {
-                // Handle PKCE login redirect
-                if (oktaAuth.isLoginRedirect()) {
+                console.log("Home page loaded, URL:", window.location.href);
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                const hasAuthCode = urlParams.has('code') || urlParams.has('state');
+                
+                if (hasAuthCode) {
+                    console.log("Authorization code detected, exchanging for tokens...");
                     await oktaAuth.handleLoginRedirect();
-                }
 
-                // Ensure user is authenticated
-                if (!(await oktaAuth.isAuthenticated())) {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    console.log("Tokens received and stored");
+                }
+                
+                const isAuthenticated = await oktaAuth.isAuthenticated();
+                console.log("Is authenticated:", isAuthenticated);
+                
+                if (!isAuthenticated) {
+                    console.log("Not authenticated, redirecting to login");
                     window.location.href = "index.html";
                     return;
                 }
-
-                // Debug user groups
+                
                 const user = await oktaAuth.getUser();
-                console.log("User Groups:", user.groups);
-
-                // Role based redirect
+                console.log("User:", user.email);
+                console.log("User Groups:", user.groups || "No groups found");
+                
+                attachLogoutHandler();
+                
+                console.log("Redirecting by role...");
                 await redirectUserByRole();
                 
-                // Logout handler
-                attachLogoutHandler();
-
             } catch (error) {
                 console.error("Home page error:", error);
-                window.location.href = "index.html";
+
+                document.body.innerHTML = `
+                    <h2>Login Error</h2>
+                    <p>Sorry, something went wrong.</p>
+                    <p style="color: red;">${error.message}</p>
+                    <button onclick="window.location.href='index.html'">Back to Login</button>
+                `;
             }
-        });
+        })();
     </script>
 
 </body>
@@ -77,8 +95,66 @@
 
 
 
+<!-- <!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting...</title>
 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 100px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Login Successful</h2>
+    <p>Redirecting you based on your role...</p>
+
+    <button id="logoutBtn">Logout</button>
+    <script src="https://global.oktacdn.com/okta-auth-js/7.0.0/okta-auth-js.min.js"></script>
+    <script src="auth.js"></script>
+    <script src="rbac.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                // Handle PKCE login redirect
+                if (oktaAuth.isLoginRedirect()) {
+                    await oktaAuth.handleLoginRedirect();
+                }
+
+                // Ensure user is authenticated
+                if (!(await oktaAuth.isAuthenticated())) {
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                // Debug user groups
+                const user = await oktaAuth.getUser();
+                console.log("User Groups:", user.groups);
+
+                // Role based redirect
+                await redirectUserByRole();
+
+                // Logout handler
+                attachLogoutHandler();
+
+            } catch (error) {
+                console.error("Home page error:", error);
+                window.location.href = "index.html";
+            }
+        });
+    </script>
+
+</body>
+
+</html> -->
 
 
 
