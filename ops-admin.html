@@ -12,30 +12,25 @@
     <script src="auth.js"></script>
     <script src="rbac.js"></script>
 
-    <script>
+    <!-- <script>
         document.addEventListener("DOMContentLoaded", async () => {
 
             try {
 
-                // Restore login tokens if returning from Okta
-                if (oktaAuth.isLoginRedirect()) {
+                if (oktaAuth.isLoginRedirect()) {                   //restore login tokens if returning from Okta
                     await oktaAuth.handleLoginRedirect();
                 }
 
-                // Ensure user logged in
-                if (!(await oktaAuth.isAuthenticated())) {
+                
+                if (!(await oktaAuth.isAuthenticated())) {          //ensure user's logged in
                     window.location.href = "index.html";
                     return;
                 }
 
-                // RBAC protection
-                await protectPage("Ops-admin");
+                await protectPage("Ops-admin");             //RBAC 
+                attachLogoutHandler();                      //logout btn
 
-                // Logout button
-                attachLogoutHandler();
-
-                // Debug
-                console.log("Ops Admin User:", await oktaAuth.getUser());
+                console.log("Ops Admin User:", await oktaAuth.getUser());       //debug
 
             } catch (error) {
                 console.error("Ops-admin page error:", error);
@@ -43,9 +38,21 @@
             }
 
         });
+    </script> -->
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Pass required role(s) — redirects automatically if check fails
+            const user = await checkAuthAndRole(["Ops-admin"]);
+            if (!user) return; // checkAuthAndRole already redirected
+
+            attachLogoutHandler();
+            document.querySelector("h2").textContent = `Welcome, ${user.name}!`;
+        });
     </script>
 
 
+    <h1>Admin Dashboard </h1>
+    <h2>Welcome, Ops Admin!</h2>
     <button id="logoutBtn">Logout</button>
 
 </body>
