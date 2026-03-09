@@ -14,7 +14,6 @@
     <script src="rbac.js"></script>
 
     <script>
-        // protectPageMulti(["reviewer", "ops-admin"]);
         const user = await checkAuthAndRole(["reviewer", "ops-admin"]);
         attachLogoutHandler();
     </script>
