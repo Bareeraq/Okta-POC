@@ -6,7 +6,7 @@ const oktaAuth = new OktaAuth({
     tokenManager: { storage: "localStorage" }
 });
 
-// ─── Login ────────────────────────────────────────────────────────────────────
+// ─── Login ───────────────────────────────────────────────────────────────
 function attachLoginHandler() {
     const loginBtn = document.getElementById("loginBtn");
     if (loginBtn) {
@@ -20,7 +20,7 @@ function attachLoginHandler() {
     }
 }
 
-// ─── Logout ───────────────────────────────────────────────────────────────────
+// ─── Logout ─────────────────────────────────────────────────────────────────
 function attachLogoutHandler(buttonId = "logoutBtn") {
     const btn = document.getElementById(buttonId);
     if (!btn) return;
@@ -31,15 +31,15 @@ function attachLogoutHandler(buttonId = "logoutBtn") {
 }
 
 // ─── Authorization Check ──────────────────────────────────────────────────────
-// Call on every protected page to verify session + role
+// Call on every protected page to verify session, role
 async function checkAuthAndRole(requiredRoles = []) {
 
-    // 1. Handle redirect if returning from Okta
+    //Handles redirect if returning from Okta
     if (oktaAuth.isLoginRedirect()) {
         await oktaAuth.handleLoginRedirect();
     }
 
-    // 2. Check session
+    //Checks session
     const isAuthenticated = await oktaAuth.isAuthenticated();
     if (!isAuthenticated) {
         console.warn("Not authenticated — redirecting to login.");
@@ -47,8 +47,7 @@ async function checkAuthAndRole(requiredRoles = []) {
         return null;
     }
 
-    // 3. Get user + validate token expiry
-    let user;
+    let user;                                                       //Get user & validate token expiry
     try {
         const tokenObj = await oktaAuth.tokenManager.get("accessToken");
 
@@ -71,7 +70,7 @@ async function checkAuthAndRole(requiredRoles = []) {
         return null;
     }
 
-    // 4. Role check
+    // Role check
     if (requiredRoles.length > 0) {
         const userGroups = user.groups || [];
         const hasRole = requiredRoles.some(role => userGroups.includes(role));

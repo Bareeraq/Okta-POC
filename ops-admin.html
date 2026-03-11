@@ -13,9 +13,9 @@
     <script src="rbac.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", async () => {
-            // Pass required role(s) — redirects automatically if check fails
+            //pass required role- redirects automatically if check fails
             const user = await checkAuthAndRole(["Ops-admin"]);
-            if (!user) return; // checkAuthAndRole already redirected
+            if (!user) return; 
 
             attachLogoutHandler();
             document.querySelector("h2").textContent = `Welcome, ${user.name}!`;

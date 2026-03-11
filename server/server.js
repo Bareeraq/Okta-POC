@@ -31,7 +31,7 @@ app.post("/api/register", async (req, res) => {
     }
 
     try {
-        // Step 1: Create user WITHOUT activating
+        //create user WITHOUT activating
         const createRes = await fetch(`${OKTA_DOMAIN}/api/v1/users?activate=false`, {
             method: "POST",
             headers: {
@@ -63,7 +63,7 @@ app.post("/api/register", async (req, res) => {
 
         const userId = newUser.id;
 
-        // Step 2: Activate WITHOUT sending email
+        //activate WITHOUT sending email
         const activateRes = await fetch(`${OKTA_DOMAIN}/api/v1/users/${userId}/lifecycle/activate?sendEmail=false`, {
             method: "POST",
             headers: {
@@ -76,7 +76,7 @@ app.post("/api/register", async (req, res) => {
         console.log("Activate status:", activateRes.status);
         console.log("Activate response:", JSON.stringify(activateData, null, 2));
 
-        // Step 3: Assign to role group
+        //assign to role group
         const groupRes = await fetch(`${OKTA_DOMAIN}/api/v1/groups/${ROLE_GROUP_MAP[role]}/users/${userId}`, {
             method: "PUT",
             headers: {
